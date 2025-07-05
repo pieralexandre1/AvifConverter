@@ -1,0 +1,138 @@
+body {
+    background-color: #111;
+    color: #ddd;
+}
+
+.container {
+    text-align: center;
+}
+
+.underline {
+    text-decoration: underline;
+    color: #ff6464
+}
+
+.path {
+    color: #a4a1ff;
+}
+
+.valid {
+    color: #29d029;
+}
+
+.invalid {
+    color: #990202;
+}
+
+.left {
+    left: 15px;
+    height: 25px;
+}
+
+button {
+    cursor: -moz-grab;
+}
+
+button.leftbutton {
+    display: inline-block;
+    width: 150px;
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid #7e7bcf;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s ease-in;
+    z-index: 1;
+}
+
+button.startbutton {
+    display: inline-block;
+    width: 150px;
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid #08d819;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s ease-in;
+    z-index: 1;
+}
+
+button::before,
+button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 0;
+    height: 100%;
+    transform: skew(15deg);
+    transition: all 0.5s;
+    overflow: hidden;
+    z-index: -1;
+}
+
+button.leftbutton::before {
+    left: -10px;
+    background: #6f6be2;
+}
+
+button.leftbutton::after {
+    right: -10px;
+    background: #5f5dad;
+}
+
+button.startbutton::before {
+    left: -10px;
+    background: #41ff30;
+}
+
+button.startbutton::after {
+    right: -10px;
+    background: #03bd3b;
+}
+
+button:hover::before,
+button:hover::after {
+    width: 58%;
+}
+
+button.leftbutton:hover span {
+    color: #2d28b3;
+    transition: 0.3s;
+}
+
+button.leftbutton span {
+    color: #1711d8;
+    font-size: 18px;
+    transition: all 0.3s ease-in;
+}
+
+button.startbutton:hover span {
+    color: #076b0f;
+    transition: 0.3s;
+}
+
+button.startbutton span {
+    color: #197225;
+    font-size: 18px;
+    transition: all 0.3s ease-in;
+}
+
+.valueColor {
+    color: #00cfff;
+}
+
+.messageMain {
+    padding-top: 20px;
+    font-size: 20px;
+}
+
+.errorMessage {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 20%;
+    color: rgb(223, 14, 14);
+    font-size: 18px;
+}
