@@ -43,7 +43,8 @@ $version = version_compare(phpversion(), '8.1.0') >= 0
             <h3>Required php version (PHP 8 >= 8.1.0)</h3>
         </div>
         <div>
-            <h3>Your php version is: <span class="<?php echo $version ? "valid" : "invalid"; ?>"><?php echo phpversion();echo $version ? " &#10003;" : " &#10060;"; ?> </span></h3>
+            <h3>Your php version is: <span class="<?php echo $version ? "valid" : "invalid"; ?>"><?php echo phpversion();
+                                                                                                    echo $version ? " &#10003;" : " &#10060;"; ?> </span></h3>
         </div>
 
         <div>
@@ -110,17 +111,32 @@ $version = version_compare(phpversion(), '8.1.0') >= 0
         document.getElementById("startButton").disabled = true;
         document.getElementById("mainMessage").style.visibility = "visible";
         document.getElementById("errorMessageDiv").style.visibility = "hidden";
+
         fetch("code/Main.php", {
-                method: "POST",
-                body: JSON.stringify({
-                    speed: document.getElementById("rangeSpeed").value,
-                    quality: document.getElementById("rangeQuality").value
-                }),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
+            method: "POST",
+            body: JSON.stringify({
+                speed: document.getElementById("rangeSpeed").value,
+                quality: document.getElementById("rangeQuality").value
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        }).then((response) => {
+            response.text().then((text) => {
+                try {
+                    //Showing if there any fatal error from main script
+                    json = JSON.parse(text);
+                    showResult(json);
+                } catch (err) {
+                    document.getElementById("mainMessage").innerText = "Error";
+                    document.getElementById("startButton").disabled = false; //Reactivate button after disabling it during process
+                    var messageText = "Error received: ";
+                    messageText += text;
+                    document.getElementById("errorText").innerText = messageText;
+                    document.getElementById("errorMessageDiv").style.visibility = "visible";
                 }
-            }).then((response) => response.json())
-            .then((json) => showResult(json));
+            });
+        })
     }
 
     function openExplorer(input) {
