@@ -22,14 +22,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
+    $countListOfFiles = count($listOfFiles);
     //Create the new file name and make sure there are no duplicate name like test.jpg and test.png by renmaing with a number
-    for ($i = 0; $i < count($listOfFiles); $i++) {
+    for ($i = 0; $i < $countListOfFiles; $i++) {
         if ($listOfFiles[$i]->newName == "") {
             $firstNameWhieoutExtension = explode(".", $listOfFiles[$i]->name);
             array_pop($firstNameWhieoutExtension);
             $firstNameWhieoutExtension = implode(".", $firstNameWhieoutExtension);
             $count = 1;
-            for ($j = $i + 1; $j < count($listOfFiles) - 1; $j++) {
+            for ($j = $i + 1; $j < $countListOfFiles; $j++) {
                 $secondNameWhieoutExtension = explode(".", $listOfFiles[$j]->name);
                 array_pop($secondNameWhieoutExtension);
                 $secondNameWhieoutExtension = implode(".", $secondNameWhieoutExtension);
@@ -54,21 +55,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $setting["quality"] = $quality;
     file_put_contents("setting.json", json_encode($setting, JSON_PRETTY_PRINT));
 
-    $old_error_handler = set_error_handler("myErrorHandler");
+    $error_handler = set_error_handler("myErrorHandler");
     $index = -1;
     foreach ($listOfFiles as $file) {
         $index++;
         try {
             if (file_exists("../Input/" . $file->name)) {
                 $image = imageCreateFromAny("../Input/" . $file->name); //read from whatever type of allowed images type it is
-                if ($image == false) { //If not proper format when scanned properly
+                if (!$image) { //If not proper format when scanned properly
                     array_push($listOfFilesError, $file->name . " is not of a proper format inside Input after being scanned");
                     continue;
                 }
                 imageavif($image, "../Output/" . $file->newName, $quality, $speed); //save an avif file, could do multi processing but would need to use extension which make installation more hard for begginer
             }
         } catch (\Throwable $e) {
-            var_dump($e);
             array_push($listOfFilesError, $e->getMessage());
         }
     }
@@ -128,9 +128,11 @@ function myErrorHandler($errno, $errstr, $errfile, $errline)
         imagesavealpha($image, true);
         imagepalettetotruecolor($image);
         imageavif($image, "../Output/" . $file->newName, $quality, $speed);
+    } else if ($errstr == "imagecreatefrompng(): gd-png: libpng warning: iCCP: known incorrect sRGB profile") {
+        //Marking this, will still convert the image perfectly but it leave an error message, could supress error message directly but if there another error that pop up, I want to see it
     } else {
-        array_push($GLOBALS["listOfFilesError"], "Unknown error type: [$errno] $errstr<br />\n");
+        $file = $GLOBALS["listOfFiles"][$GLOBALS["index"]];
+        array_push($GLOBALS["listOfFilesError"], "Unknown error type for $file->name: [$errno] $errstr<br />\n");
     }
-    //echo "Unknown error type: [$errno] $errstr<br />\n";
     return true;
 }
